@@ -20,3 +20,13 @@ bool performMove(int xA, int yA, int xB, int yB);
 // 1 - Wygrał gracz który jest identyfikowany przez zmienną 'color'
 // 2 - Pat aka remis
 int checkWinCondition(int color);
+
+#ifndef abs
+	#define abs(x) (((x) > 0)? (x) : (-(x)))
+#endif
+#ifndef min
+	#define min(x, y) (((y) > (x))? (x) : (y))
+#endif
+#ifndef max
+	#define max(x, y) (((y) > (x))? (y) : (x))
+#endif
