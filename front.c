@@ -13,28 +13,120 @@ int main()
     getch();
     endwin();
 }
+
+void draw_coordinates(WINDOW *board) {
+    init_pair(3,COLOR_WHITE,239);
+    char coord_arts[16][3][4] = {
+        { //A
+                    {' ',' ',' ',' '},
+                    {' ','/','\\',' '},
+                    {'/','-','-','\\'}
+        },
+        { //B
+                    {' ','_',' ',' '},
+                    {'|','_',')',' '},
+                    {'|','_',')',' '}
+        },
+        { //C
+                    {' ','_',' ',' '},
+                    {'/',' ',' ',' '},
+                    {'\\','_',' ',' '}
+        },
+        { //D
+                    {' ','_',' ',' '},
+                    {'|',' ','\\',' '},
+                    {'|','_','/',' '}
+        },
+        { //E
+                    {' ','_','_',' '},
+                    {'|','_',' ',' '},
+                    {'|','_','_',' '}
+        },
+        { //F
+                    {' ','_','_',' '},
+                    {'|','_',' ',' '},
+                    {'|',' ',' ',' '}
+        },
+        { //G
+                    {' ','_',' ',' '},
+                    {'/','_',' ',' '},
+                    {'\\','_','|',' '}
+        },
+        { //H
+                    {' ',' ',' ',' '},
+                    {'|','_','|',' '},
+                    {'|',' ','|',' '}
+        },
+        { //1
+                    {' ','.',' ',' '},
+                    {'/','|',' ',' '},
+                    {' ','|',' ',' '}
+        },
+        { //2
+                    {'_',' ',' ',' '},
+                    {' ',')',' ',' '},
+                    {'/','_',' ',' '}
+        },
+        { //3
+                    {'_',' ',' ',' '},
+                    {'_',')',' ',' '},
+                    {'_',')',' ',' '}
+        },
+        { //4
+                    {' ',' ','.',' '},
+                    {' ','/','|',' '},
+                    {'\'','-','|',' '}
+        },
+        { //5
+                    {' ','_',' ',' '},
+                    {'|','_',' ',' '},
+                    {' ','_',')',' '}
+        },
+        { //6
+                    {' ',' ',' ',' '},
+                    {' ','/',' ',' '},
+                    {'(','_',')',' '}
+        },
+        { //7
+                    {'_','_',' ',' '},
+                    {' ','/',' ',' '},
+                    {'/',' ',' ',' '}
+        },
+        { //8
+                    {' ','_',' ',' '},
+                    {'(','_',')',' '},
+                    {'(','_',')',' '}
+        }
+    };
+
+    for(int k = 0; k < 8; k++) {
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 4; j++) {
+                mvaddch(i+(5*k)+6,j+3,coord_arts[k][i][j]);
+            }
+        }
+    }
+    for(int k = 8; k < 16; k++) {
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 4; j++) {
+                mvaddch(i+1,j-82+(12*k),coord_arts[k][i][j]);
+            }
+        }
+    }
+    
+}
+
 void draw_board()
 {
     start_color();
     char board[9][9];
-    WINDOW *playing_board = newwin(41,97,LINES/2-21,COLS/2-48);
-
-    char piece[3][4] ={
-                    {' ','(',')',' '},
-                    {' ',')','(',' '},
-                    {'/','_','_','\\'}
-    };
-    for(int i = 0; i < 3; i++)
-        for(int j = 0; j < 4; j++)
-        {
-            mvaddch(i,j,piece[i][j]);
-        }
+    WINDOW *playing_board = newwin(41,97,5,10);
     
     // RYSOWANIE PLANSZY
     
     init_pair(1,COLOR_YELLOW,COLOR_BLACK); // linie kolor
-    init_pair(2,COLOR_WHITE,b_b); // background kolor
-    init_pair(3,COLOR_WHITE,239);
+    init_pair(2,COLOR_WHITE,b_b); // background kolor (czerwony)
+    init_pair(3,COLOR_WHITE,239); //kolor szary
     wbkgd(playing_board,COLOR_PAIR(2));
     wattron(playing_board,COLOR_PAIR(1));
     box(playing_board,0,0);
@@ -61,7 +153,7 @@ void draw_board()
         switch (j%2)
         {
             case 0:
-                for(int i = 13 ; i < 96; i+=24)
+                for(int i = 13 ; i < 96; i+=24) //kolorowanie komorek w wierszach 1,3,5,7
                 {   
                     move(j,i);
                     for(int y = 0; y < 4; y++)
@@ -72,7 +164,7 @@ void draw_board()
                 }
                 break;
             case 1:
-                for(int i = 1 ; i < 96; i+=24)
+                for(int i = 1 ; i < 96; i+=24) // kolorowanie komorek w wierszach 2,4,6,8
                     {   
                         move(j,i);
                         for(int y = 0; y < 4; y++)
@@ -83,18 +175,34 @@ void draw_board()
                     }
                 break;
         }
-        for(int i = 1 ; i < 96; i+=24)
+        /*for(int i = 1 ; i < 96; i+=24) //kolorowanie komorek 8A, 8C, 8E, 8G (czy potrzebne?)
             {   
                 move(1,i);
                 for(int y = 1; y < 5; y++)
                     for(int x = 0;x < 11;x++)
                     {
-                        mvwaddch(playing_board,y,x+i,' ');
+                        //mvwaddch(playing_board,y,x+i,' ');
                     }
-            }
+            }*/
     }
     wattroff(playing_board,COLOR_PAIR(3));
-
+    /* test for displaying chess piece on board
+    wattron(playing_board,COLOR_PAIR(1));
+    
+    char piece[3][4] ={
+                    {' ','(',')',' '},
+                    {' ',')','(',' '},
+                    {'/','_','_','\\'}
+    };
+    
+    for(int i = 0; i < 3; i++)
+        for(int j = 0; j < 4; j++)
+        {
+            move(i+9,j+85);
+            mvwaddch(playing_board, i+9,j+85,piece[i][j]);
+        }
+    wattroff(playing_board,COLOR_PAIR(1));*/
+    draw_coordinates(playing_board);
     refresh();
     wrefresh(playing_board);
 }
