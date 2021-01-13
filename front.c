@@ -3,17 +3,52 @@
 #include <string.h>
 #define b_b 88
 void draw_board();
-
+void main_loop();
 int main()
 {
     initscr();
-    noecho();
+    //noecho();
     cbreak();
     draw_board();
+    main_loop();
     getch();
     endwin();
 }
+void main_loop()
+{
+    WINDOW *coords_input = newwin(4,21,47,10);
+    WINDOW *From = newwin(1,3,48,19);
+    WINDOW *To = newwin(1,3,49,20);
 
+    box(coords_input,0,0);
+    char from[2];
+    char to[2];
+    int i = 0;
+    bool game_over = false;
+
+    box(coords_input,0,0);
+    mvwprintw(coords_input,1,1, "Ruch z: ");
+    mvwprintw(coords_input,2,1, "Ruch na: ");
+    wrefresh(coords_input);
+
+    while(!game_over)
+    {   
+        box(coords_input,0,0);
+        if(i % 2 == 0)
+            mvwprintw(coords_input,0,4, "Ruch-bialego");
+        else
+            mvwprintw(coords_input,0,4, "Ruch-czarnego");
+        wrefresh(coords_input);
+
+        wscanw(From,"%s",from);
+        move(49,20);
+        wscanw(To,"%s",to);
+        //funkcja konwertująca
+        wclear(From);
+        wclear(To);
+        i++;
+    }
+}
 void draw_coordinates(WINDOW *board)
 {
     init_pair(3, COLOR_WHITE, 239);
@@ -121,10 +156,10 @@ bool field_color(int x, int y)
 void draw_pieces(WINDOW *board)
 {
     //stworzyć funkcję zwracającą kolor czcionki i funkcję zwracającą kolor tła
-    int piece_color = COLOR_WHITE;
+    int piece_color = COLOR_BLACK;
     int background_color = b_b;
     init_pair(4, piece_color, background_color);//czerwony
-    init_pair(6, COLOR_WHITE, 239);//szary
+    init_pair(6, COLOR_BLACK, 239);//szary
     int x = 0; //0-7 =
     int y = 7;
 
@@ -160,6 +195,7 @@ void draw_pieces(WINDOW *board)
          {' ', ' ', ' ', '/', '\\', '*', '/', '\\', ' ', ' ', ' '},
          {' ', ' ', '/', '(', 'o', ' ', 'o', ')', '\\', ' ', ' '},
          {' ', ' ', ' ', ' ', '(', '_', ')', ' ', ' ', ' ', ' '}}};
+    attron(A_BOLD);
     for (int k = 0; k < 6; k++)
     {
         y = k;
@@ -173,6 +209,7 @@ void draw_pieces(WINDOW *board)
                     mvwaddch(board, i + (x * 5) + 1, j + (y * 12) + 1, pieces[k][i][j] | COLOR_PAIR(4));
             }
     }
+    attroff(A_BOLD);
 }
 
 void draw_board()
