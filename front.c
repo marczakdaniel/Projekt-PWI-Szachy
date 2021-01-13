@@ -83,7 +83,7 @@ void draw_coordinates(WINDOW *board)
          {' ', ' ', ' ', ' '},
          {'|', '_', '|', ' '},
          {'|', ' ', '|', ' '}}};
-
+    attron(COLOR_PAIR(1));
     for (int k = 0; k < 8; k++)
     {
         for (int i = 0; i < 3; i++)
@@ -104,15 +104,28 @@ void draw_coordinates(WINDOW *board)
             }
         }
     }
+    attroff(COLOR_PAIR(1));
 }
-
+//funkcja sprawdza kolor pola na ktorym ma byc wyrysowana figura
+bool field_color(int x, int y)
+{   //jesli szare zwraca true, jesli czerwone zwraca false
+    if(x % 2 == 0 && y % 2 == 0)
+        return true;
+    else if(x % 2 == 0 && y % 2 != 0)
+        return false;
+    else if(x % 2 != 0 && y % 2 == 0)
+        return false;
+    else if(x % 2 != 0 && y % 2 != 0)
+        return true;
+}
 void draw_pieces(WINDOW *board)
 {
     //stworzyć funkcję zwracającą kolor czcionki i funkcję zwracającą kolor tła
     int piece_color = COLOR_WHITE;
     int background_color = b_b;
-    init_pair(4, piece_color, background_color);
-    int x = 2; //0-7 =
+    init_pair(4, piece_color, background_color);//czerwony
+    init_pair(6, COLOR_WHITE, 239);//szary
+    int x = 0; //0-7 =
     int y = 7;
 
     //dopasować kolejność figur względem numeracji w strukturze
@@ -147,8 +160,6 @@ void draw_pieces(WINDOW *board)
          {' ', ' ', ' ', '/', '\\', '*', '/', '\\', ' ', ' ', ' '},
          {' ', ' ', '/', '(', 'o', ' ', 'o', ')', '\\', ' ', ' '},
          {' ', ' ', ' ', ' ', '(', '_', ')', ' ', ' ', ' ', ' '}}};
-
-    wattron(board, COLOR_PAIR(4));
     for (int k = 0; k < 6; k++)
     {
         y = k;
@@ -156,10 +167,12 @@ void draw_pieces(WINDOW *board)
             for (int j = 0; j < 11; j++)
             {
                 //move(i+(x*5),j+(y*12));
-                mvwaddch(board, i + (x * 5) + 1, j + (y * 12) + 1, pieces[k][i][j]);
+                if(field_color(x,y))//true szary, false czerwony
+                    mvwaddch(board, i + (x * 5) + 1, j + (y * 12) + 1, pieces[k][i][j] | COLOR_PAIR(6));
+                else
+                    mvwaddch(board, i + (x * 5) + 1, j + (y * 12) + 1, pieces[k][i][j] | COLOR_PAIR(4));
             }
     }
-    wattroff(board, COLOR_PAIR(1));
 }
 
 void draw_board()
@@ -173,7 +186,7 @@ void draw_board()
     init_pair(1, COLOR_YELLOW, COLOR_BLACK); // linie kolor
     init_pair(2, COLOR_WHITE, b_b);          // background kolor (czerwony)
     init_pair(3, COLOR_WHITE, 239);          //kolor szary
-    wbkgd(playing_board, COLOR_PAIR(2));
+
     wattron(playing_board, COLOR_PAIR(1));
     box(playing_board, 0, 0);
     for (int y = 5; y < 48; y += 5) // podzial poziomy
@@ -196,7 +209,7 @@ void draw_board()
         for (int j = 5; j < 40; j += 5) // laczenia wewnetrzne
             mvwaddch(playing_board, j, i, ACS_PLUS);
     wattroff(playing_board, COLOR_PAIR(1));
-    wattron(playing_board, COLOR_PAIR(3));
+
     int temp;
     for (int j = 1; j < 40; j += 5)
     {
@@ -209,7 +222,16 @@ void draw_board()
                 for (int y = 0; y < 4; y++)
                     for (int x = 0; x < 11; x++)
                     {
-                        mvwaddch(playing_board, y + j, x + i, ' ');
+                        mvwaddch(playing_board, y + j, x + i, ' ' | COLOR_PAIR(3));
+                    }
+            }
+            for (int i = 1; i < 96; i += 24) 
+            {
+                move(j, i);
+                for (int y = 0; y < 4; y++)
+                    for (int x = 0; x < 11; x++)
+                    {
+                        mvwaddch(playing_board, y + j, x + i, ' ' | COLOR_PAIR(2));
                     }
             }
             break;
@@ -220,13 +242,21 @@ void draw_board()
                 for (int y = 0; y < 4; y++)
                     for (int x = 0; x < 11; x++)
                     {
-                        mvwaddch(playing_board, y + j, x + i, ' ');
+                        mvwaddch(playing_board, y + j, x + i, ' ' | COLOR_PAIR(3));
+                    }
+            }
+            for (int i = 13; i < 96; i += 24) 
+            {
+                move(j, i);
+                for (int y = 0; y < 4; y++)
+                    for (int x = 0; x < 11; x++)
+                    {
+                        mvwaddch(playing_board, y + j, x + i, ' ' | COLOR_PAIR(2));
                     }
             }
             break;
         }
     }
-    wattroff(playing_board, COLOR_PAIR(3));
     /* test for displaying chess piece on board
     wattron(playing_board,COLOR_PAIR(1));
     
