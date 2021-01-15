@@ -6,11 +6,6 @@ ChessPiece getChessPiece(int xA, int yA) {
     return result;
 }
 
-void removeChessPiece(int xA, int yA) {
-    free(Board[xA][yA]);
-    Board[xA][yA] = NULL;
-}
-
 ChessPiece *initChessPiece(int xA, int yA, int color, int type, bool (*piecemove)()) {
     ChessPiece *result = (ChessPiece *) malloc(sizeof(ChessPiece));
     result->X = xA;
@@ -19,6 +14,12 @@ ChessPiece *initChessPiece(int xA, int yA, int color, int type, bool (*piecemove
     result->Type = type;
     result->moveFunctionPointer = piecemove;
     return result;
+}
+
+void removeChessPiece(int xA, int yA) {
+    free(Board[xA][yA]);
+    ChessPiece *pom = initChessPiece(xA, yA, 0, 0, /*miejsce na funcje */); // trzeba dodac funkcje
+    Board[xA][yA] = pom;
 }
 
 void setChessPiece(ChessPiece piece, int xB, int yB) {
