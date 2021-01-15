@@ -1,3 +1,6 @@
+#include <stdbool.h>
+#include <stdlib.h>
+#include "structure.h"
 #include "gamerules.h"
 
 void gameInit() {
@@ -8,7 +11,7 @@ bool performMove(int xA, int yA, int xB, int yB) {
 	//nie można wykonać ruchu w miejscu
 	if(xA == xB && yA == yB) return false;
 	ChessPiece chessPiece = getChessPiece(xA, yA);
-	if(!chessPiece.moveFunctionPointer(int color, int xA, int yA, int xB, int yB)) {
+	if(!chessPiece.moveFunctionPointer(chessPiece.color, xA, yA, xB, yB)) {
 		return false;
 	}
 	if(getChessPiece(xA, yA).color == getChessPiece(xB, yB).color)
@@ -50,16 +53,16 @@ bool checkRookMove(int color, int xA, int yA, int xB, int yB) {
 	if(xA != xB && yA != yB) return false;
 	
 	if(xA == yA) {
-		for(int i = min(yB, yA) + 1, i < max(yB, yA); i++) {
+		for(int i = min(yB, yA) + 1; i < max(yB, yA); i++) {
 			//getChessPiece jeszcze nie gotowy
-			if(getChessPiece(xA, i).type != empty) return false;
+			if(getChessPiece(xA, i).type != 0) return false;
 		}
 		return true;
 	}
 	//else
-	for(int i = min(xB, xA) + 1, i < max(xB, xA); i++) {
+	for(int i = min(xB, xA) + 1; i < max(xB, xA); i++) {
 		//getChessPiece jeszcze nie gotowy
-		if(getChessPiece(i, yA).type != empty) return false;
+		if(getChessPiece(i, yA).type != 0) return false;
 	}
 	return true;
 }

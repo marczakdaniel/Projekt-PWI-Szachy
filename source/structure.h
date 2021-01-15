@@ -6,16 +6,13 @@
 typedef struct cp {
     int X; // przechowuje wiersz
     int Y; // przechowuje kolumne
-    int Color; // przechowuje kolor
-    int Type; // przechowuje typ
+    int color; // przechowuje kolor
+    int type; // przechowuje typ
     bool (*moveFunctionPointer)(int color, int xA, int yA, int xB, int yB); // przechowuje funkcje ruchu pionka
 } ChessPiece;
 
-// tablica zawierajaca wskazniki na pionki znajdujace sie danej pozycji planszy
-ChessPiece *Board[9][9];
-
 // allokuje pamiec na pionek i przypisuje mu wartosci poczatkowe
-ChessPiece *initChessPiece(int xA, int yA, int color, int type, bool (*piecemove)());
+ChessPiece *initChessPiece(int xA, int yA, int color, int type, bool (*moveFunctionPointer)(int color, int xA, int yA, int xB, int yB));
 
 // zwraca pionek znajdujacy sie na danym polu
 ChessPiece getChessPiece(int xA, int yA);

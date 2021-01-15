@@ -1,19 +1,10 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <string.h>
-#define b_b 88
-void draw_board();
-void main_loop();
-int main()
-{
-    initscr();
-    //noecho();
-    cbreak();
-    draw_board();
-    main_loop();
-    getch();
-    endwin();
-}
+#include "structure.h"
+#include "gamerules.h"
+#include "front.h"
+
 void main_loop()
 {
     WINDOW *coords_input = newwin(4,21,47,10);
