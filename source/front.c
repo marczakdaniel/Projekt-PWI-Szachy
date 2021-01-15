@@ -1,9 +1,35 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "structure.h"
 #include "gamerules.h"
 #include "front.h"
+
+bool is_valid_coord(int c) {
+    //sprawdza poprawnosc wprowadzonego koordynatu
+    return (c >= 0 && c <= 7);
+}
+
+bool convert_coordinates(char* from, char* to) {
+    //jezeli wprowadzono niepoprawne wartosci zwraca false by ponownie wczytac input
+    //wpp zwraca wywoluje funkcje perform move z podanymi koordynatami
+    //zamienia a-h na 0-7 oraz 1-8 na 0-7
+    int coords[4];
+
+    coords[0] = (tolower(from[0]) - 'a');
+    coords[1] = from[1] - ('0' + 1);
+    coords[2] = (tolower(to[0]) - 'a');
+    coords[3] = to[1] - ('0' + 1);
+    
+    for(int i=0; i<3; i++) {
+        if(!is_valid_coord(coords[i])) {
+            return 0;
+        }
+    }
+    performMove(coords[0], coords[1], coords[2], coords[4]);
+    return 1;
+}
 
 void main_loop()
 {
@@ -24,19 +50,21 @@ void main_loop()
 
     while(!game_over)
     {   
-        box(coords_input,0,0);
-        if(i % 2 == 0)
-            mvwprintw(coords_input,0,4, "Ruch-bialego");
-        else
-            mvwprintw(coords_input,0,4, "Ruch-czarnego");
-        wrefresh(coords_input);
+        do { //petla wczytujaca koordynaty wykona sie minimum raz, az do wprowadzenia "poprawnych"
+            box(coords_input,0,0);
+            if(i % 2 == 0)
+                mvwprintw(coords_input,0,4, "Ruch-bialego");
+            else
+                mvwprintw(coords_input,0,4, "Ruch-czarnego");
+            wrefresh(coords_input);
 
-        wscanw(From,"%s",from);
-        move(49,20);
-        wscanw(To,"%s",to);
-        //funkcja konwertująca
-        wclear(From);
-        wclear(To);
+            wscanw(From,"%s",from);
+            move(49,20);
+            wscanw(To,"%s",to);
+            
+            wclear(From);
+            wclear(To);
+        } while(!convert_coordinates(from, to));
         i++;
     }
 }
