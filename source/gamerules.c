@@ -125,18 +125,18 @@ bool checkRookMove(int color, int xA, int yA, int xB, int yB) {
 	//wieża przesuwa się wzdłuz jednej osi
 	if(xA != xB && yA != yB) return false;
 	
-	if(xA == yA) {
+	if(xA == xB) {
 		for(int i = min(yB, yA) + 1; i < max(yB, yA); i++) {
-			//getChessPiece jeszcze nie gotowy
 			if(getChessPiece(xA, i).type != 0) return false;
 		}
 		return true;
 	}
 	//else
 	for(int i = min(xB, xA) + 1; i < max(xB, xA); i++) {
-		//getChessPiece jeszcze nie gotowy
 		if(getChessPiece(i, yA).type != 0) return false;
+		
 	}
+	
 	return true;
 }
 
@@ -151,6 +151,25 @@ bool checkKingMove(int color, int xA, int yA, int xB, int yB) {
 
 int checkWinCondition(int color) {
 	return 0;
+}
+
+bool isKingChecked(int color) {
+	int kingx, kingy;
+	for(int y = 0; y < 8; y++) {
+		for(int x = 0; x < 8; x++) {
+			if(getChessPiece(x, y).type == 6 && getChessPiece(x, y).color == color) {
+				kingx = x; kingy = y;
+			}
+		}
+	}
+	ChessPiece cp;
+	for(int y = 0; y < 8; y++) {
+		for(int x = 0; x < 8; x++) {
+			cp = getChessPiece(x, y);
+			if(cp.color + color == 3 && cp.moveFunctionPointer(cp.color, x, y, kingx, kingy)) return true;
+		}
+	}
+	return false;
 }
 
 void DisplayArrayContent() {

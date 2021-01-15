@@ -16,9 +16,17 @@ int main()
     gameInit();
     
     printf("Test\n");
-    printf("%d %d %d\n", getChessPiece(1,0).type,  getChessPiece(1,0).color,  getChessPiece(1,0).moveFunctionPointer(1,1,0,0,2));
-    printf("%d %d %d\n", getChessPiece(0,0).type,  getChessPiece(0,0).color,  getChessPiece(0,0).moveFunctionPointer(1,0,0,0,2));
     
+    for(int i = 0; i < 8; i++) {
+		removeChessPiece(i,1);
+		removeChessPiece(i,6);
+		ChessPiece cp = getChessPiece(i, 0);
+		performMove(i, 0, i, 2);
+	}
+    performMove(7, 7, 7, 2);
+    performMove(0, 2, 4, 2);
+    
+    printf("%d %d\n", isKingChecked(1), isKingChecked(2));
     
     DisplayArrayContent();
     //draw_board();
