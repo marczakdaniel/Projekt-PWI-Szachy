@@ -152,3 +152,13 @@ bool checkKingMove(int color, int xA, int yA, int xB, int yB) {
 int checkWinCondition(int color) {
 	return 0;
 }
+
+void DisplayArrayContent() {
+	for(int y = 0; y < 8; y++) {
+		for(int x = 0; x < 8; x++) {
+			ChessPiece cp = getChessPiece(x, y);
+			printf("%d:%d ",cp.type, cp.color);
+		}
+		putchar('\n');
+	}
+}

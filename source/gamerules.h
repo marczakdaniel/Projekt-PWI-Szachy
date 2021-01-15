@@ -30,3 +30,6 @@ int checkWinCondition(int color);
 #ifndef max
 	#define max(x, y) (((y) > (x))? (y) : (x))
 #endif
+
+//Tymczasowa funkcja pomocnicza
+void DisplayArrayContent();
