@@ -11,6 +11,9 @@ int main()
     initscr();
     //noecho();
     cbreak();
+    
+    gameInit();
+    
     draw_board();
     main_loop();
     getch();

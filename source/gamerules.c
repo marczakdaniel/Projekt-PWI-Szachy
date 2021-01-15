@@ -4,6 +4,79 @@
 #include "gamerules.h"
 
 void gameInit() {
+	ChessPiece newChessPiece;
+	//------WIEŻE---------
+	newChessPiece.color = 1;
+	newChessPiece.type = 2;
+	newChessPiece.moveFunctionPointer = &checkRookMove;
+	setChessPiece(newChessPiece, 0, 0);
+	setChessPiece(newChessPiece, 7, 0);
+	
+	newChessPiece.color = 2;
+	setChessPiece(newChessPiece, 0, 7);
+	setChessPiece(newChessPiece, 7, 7);
+	//--------KONIE---------
+	newChessPiece.type = 3;
+	newChessPiece.color = 1;
+	newChessPiece.moveFunctionPointer = &checkKnightMove;
+	setChessPiece(newChessPiece, 1, 0);
+	setChessPiece(newChessPiece, 6, 0);
+	
+	newChessPiece.color = 2;
+	setChessPiece(newChessPiece, 1, 7);
+	setChessPiece(newChessPiece, 6, 7);
+	
+	//--------GOŃCE-----------
+	newChessPiece.color = 1;
+	newChessPiece.type = 4;
+	newChessPiece.moveFunctionPointer = &checkBishopMove;
+	setChessPiece(newChessPiece, 2, 0);
+	setChessPiece(newChessPiece, 5, 0);
+	
+	newChessPiece.color = 2;
+	setChessPiece(newChessPiece, 2, 7);
+	setChessPiece(newChessPiece, 5, 7);
+	
+	//--------KRÓLOWE----------
+	newChessPiece.color = 1;
+	newChessPiece.type = 5;
+	newChessPiece.moveFunctionPointer = &checkQueenMove;
+	setChessPiece(newChessPiece, 3, 0);
+	
+	newChessPiece.color = 2;
+	setChessPiece(newChessPiece, 3, 7);
+	
+	//--------KRÓLOWIE----------
+	
+	newChessPiece.color = 1;
+	newChessPiece.type = 6;
+	newChessPiece.moveFunctionPointer = &checkKingMove;
+	setChessPiece(newChessPiece, 4, 0);
+	newChessPiece.color = 2;
+	setChessPiece(newChessPiece, 4, 7);
+	
+	//-------PIONKI-----------
+	
+	newChessPiece.color = 1;
+	newChessPiece.type = 1;
+	newChessPiece.moveFunctionPointer = &checkPawnsMove;
+	for(int i = 0 ; i < 8; i++) {
+		setChessPiece(newChessPiece, i, 1);
+	}
+	newChessPiece.color = 2;
+	for(int i = 0 ; i < 8; i++) {
+		setChessPiece(newChessPiece, i, 6);
+	}
+	//-----PUSTE POLA--------
+	
+	newChessPiece.color = 0;
+	newChessPiece.type = 0;
+	newChessPiece.moveFunctionPointer = &emptyTileMove;
+	for(int i = 0 ; i < 8; i++) {
+		for(int j = 2; j < 6; j++)
+		setChessPiece(newChessPiece, i, j);
+	}
+	
 	return;
 }
 

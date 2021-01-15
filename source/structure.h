@@ -2,6 +2,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+/*	Dane:
+ * 		color:
+ * 			0 - puste pole
+ * 			1 - białe
+ * 			2 - czarne
+ * 		typ:
+ * 			0 - puste pole
+ * 			1 - pionek/pawn
+ * 			2 - wieża/rook
+ * 			3 - koń/knight
+ * 			4 - goniec/bishop
+ * 			5 - dama/quenn
+ * 			6 - król/king
+ */
+ 
 // struktura pionka szachowego
 typedef struct cp {
     int X; // przechowuje wiersz
