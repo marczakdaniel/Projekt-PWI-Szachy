@@ -135,14 +135,7 @@ void draw_coordinates(WINDOW *board)
 //funkcja sprawdza kolor pola na ktorym ma byc wyrysowana figura
 bool field_color(int x, int y)
 {   //jesli szare zwraca true, jesli czerwone zwraca false
-    if(x % 2 == 0 && y % 2 == 0)
-        return true;
-    else if(x % 2 == 0 && y % 2 != 0)
-        return false;
-    else if(x % 2 != 0 && y % 2 == 0)
-        return false;
-    else if(x % 2 != 0 && y % 2 != 0)
-        return true;
+    return !((x+y)%2);
 }
 void draw_pieces(WINDOW *board)
 {
