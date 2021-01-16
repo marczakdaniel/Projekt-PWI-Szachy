@@ -1,9 +1,35 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "structure.h"
 #include "gamerules.h"
 #include "front.h"
+
+bool is_valid_coord(int c) {
+    //sprawdza poprawnosc wprowadzonego koordynatu
+    return (c >= 0 && c <= 7);
+}
+
+bool convert_coordinates(char* from, char* to) {
+    //jezeli wprowadzono niepoprawne wartosci zwraca false by ponownie wczytac input
+    //wpp zwraca wywoluje funkcje perform move z podanymi koordynatami
+    //zamienia a-h na 0-7 oraz 1-8 na 0-7
+    int coords[4];
+
+    coords[0] = (tolower(from[0]) - 'a');
+    coords[1] = from[1] - ('0' + 1);
+    coords[2] = (tolower(to[0]) - 'a');
+    coords[3] = to[1] - ('0' + 1);
+    
+    for(int i=0; i<3; i++) {
+        if(!is_valid_coord(coords[i])) {
+            return 0;
+        }
+    }
+    performMove(coords[0], coords[1], coords[2], coords[4]);
+    return 1;
+}
 
 void main_loop()
 {
@@ -24,19 +50,21 @@ void main_loop()
 
     while(!game_over)
     {   
-        box(coords_input,0,0);
-        if(i % 2 == 0)
-            mvwprintw(coords_input,0,4, "Ruch-bialego");
-        else
-            mvwprintw(coords_input,0,4, "Ruch-czarnego");
-        wrefresh(coords_input);
+        do { //petla wczytujaca koordynaty wykona sie minimum raz, az do wprowadzenia "poprawnych"
+            box(coords_input,0,0);
+            if(i % 2 == 0)
+                mvwprintw(coords_input,0,4, "Ruch-bialego");
+            else
+                mvwprintw(coords_input,0,4, "Ruch-czarnego");
+            wrefresh(coords_input);
 
-        wscanw(From,"%s",from);
-        move(49,20);
-        wscanw(To,"%s",to);
-        //funkcja konwertująca
-        wclear(From);
-        wclear(To);
+            wscanw(From,"%s",from);
+            move(49,20);
+            wscanw(To,"%s",to);
+            
+            wclear(From);
+            wclear(To);
+        } while(!convert_coordinates(from, to));
         i++;
     }
 }
@@ -135,14 +163,7 @@ void draw_coordinates(WINDOW *board)
 //funkcja sprawdza kolor pola na ktorym ma byc wyrysowana figura
 bool field_color(int x, int y)
 {   //jesli szare zwraca true, jesli czerwone zwraca false
-    if(x % 2 == 0 && y % 2 == 0)
-        return true;
-    else if(x % 2 == 0 && y % 2 != 0)
-        return false;
-    else if(x % 2 != 0 && y % 2 == 0)
-        return false;
-    else if(x % 2 != 0 && y % 2 != 0)
-        return true;
+    return !((x+y)%2);
 }
 void draw_pieces(WINDOW *board)
 {
@@ -285,22 +306,7 @@ void draw_board()
             break;
         }
     }
-    /* test for displaying chess piece on board
-    wattron(playing_board,COLOR_PAIR(1));
-    
-    char piece[3][4] ={
-                    {' ','(',')',' '},
-                    {' ',')','(',' '},
-                    {'/','_','_','\\'}
-    };
-    
-    for(int i = 0; i < 3; i++)
-        for(int j = 0; j < 4; j++)
-        {
-            move(i+9,j+85);
-            mvwaddch(playing_board, i+9,j+85,piece[i][j]);
-        }
-    wattroff(playing_board,COLOR_PAIR(1));*/
+
     draw_coordinates(playing_board);
     draw_pieces(playing_board);
     refresh();
