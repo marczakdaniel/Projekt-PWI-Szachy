@@ -306,22 +306,7 @@ void draw_board()
             break;
         }
     }
-    /* test for displaying chess piece on board
-    wattron(playing_board,COLOR_PAIR(1));
-    
-    char piece[3][4] ={
-                    {' ','(',')',' '},
-                    {' ',')','(',' '},
-                    {'/','_','_','\\'}
-    };
-    
-    for(int i = 0; i < 3; i++)
-        for(int j = 0; j < 4; j++)
-        {
-            move(i+9,j+85);
-            mvwaddch(playing_board, i+9,j+85,piece[i][j]);
-        }
-    wattroff(playing_board,COLOR_PAIR(1));*/
+
     draw_coordinates(playing_board);
     draw_pieces(playing_board);
     refresh();
