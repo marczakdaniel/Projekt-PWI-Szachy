@@ -146,7 +146,58 @@ bool checkQueenMove(int color, int xA, int yA, int xB, int yB) {
 }
 
 bool checkKingMove(int color, int xA, int yA, int xB, int yB) {
-	return false;
+	if(abs(xA-xB) <= 1 && abs(yA-yB) <= 1) return true;
+	//próba wykonania roszady
+	if(color == 1 && xA == 4 && yA == 0 && yB == 0 && abs(xA-xB) == 2) {
+		if(xB == 2) {
+			ChessPiece Rook = getChessPiece(0, 0);
+			if(Rook.color == 1 && Rook.type == 2 &&
+				 getChessPiece(1, 0).type == 0 &&
+				 getChessPiece(2, 0).type == 0 &&
+				 getChessPiece(3, 0).type ==  0) {
+				
+				removeChessPiece(0,0);
+				setChessPiece(Rook ,3, 0);
+				return true;
+			 }
+		}
+		if(xB == 6) {
+			ChessPiece Rook = getChessPiece(7, 0);
+			if(Rook.color == 1 && Rook.type == 2 &&
+				 getChessPiece(6, 0).type == 0 &&
+				 getChessPiece(4, 0).type == 0) {
+				removeChessPiece(7,0);
+				setChessPiece(Rook ,5, 0);
+				return true;
+			 }
+		}
+	}
+	if(color == 2 && xA == 4 && yA == 7 && yB == 7 && abs(xA-xB) == 2) {
+		if(xB == 2) {
+			ChessPiece Rook = getChessPiece(7, 0);
+			if(Rook.color == 1 && Rook.type == 2 &&
+				 getChessPiece(1, 7).type == 0 &&
+				 getChessPiece(2, 7).type == 0 &&
+				 getChessPiece(3, 7).type ==  0) {
+				
+				removeChessPiece(0,7);
+				setChessPiece(Rook ,3, 7);
+				return true;
+			 }
+		}
+		if(xB == 6) {
+			ChessPiece Rook = getChessPiece(7, 7);
+			if(Rook.color == 1 && Rook.type == 2 &&
+				 getChessPiece(6, 7).type == 0 &&
+				 getChessPiece(4, 7).type == 0) {
+				removeChessPiece(7,7);
+				setChessPiece(Rook ,5, 7);
+				return true;
+			 }
+		}
+	}
+	
+	return false;  
 }
 
 int checkWinCondition(int color) {
