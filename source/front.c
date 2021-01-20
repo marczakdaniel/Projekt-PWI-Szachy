@@ -187,11 +187,10 @@ bool field_color(int x, int y)
 void draw_pieces(WINDOW *board)
 {
     int color;
-    init_pair(9, COLOR_WHITE, b_b); //dla pustego pola
-    init_pair(10, COLOR_BLACK, 239);
-    init_pair(11, COLOR_WHITE, 239);
-    init_pair(12, COLOR_BLACK, b_b);
-    init_pair(13, COLOR_WHITE, b_b);
+    init_pair(10, COLOR_BLACK, b_b);
+    init_pair(11, COLOR_WHITE, b_b);
+    init_pair(12, COLOR_BLACK, 239);
+    init_pair(13, COLOR_WHITE, 239);
 
     char pieces[7][4][11] = {
         {//pionek
@@ -236,6 +235,7 @@ void draw_pieces(WINDOW *board)
         {
             ChessPiece piece_to_draw = getChessPiece(x, y);
             color = piece_to_draw.color + (field_color(x, y) * 2) + 9;
+            if(!piece_to_draw.color) color++;
 
             for (int i = 0; i < 4; i++)
             {
