@@ -241,10 +241,6 @@ void draw_pieces(WINDOW *board)
             {
                 for (int j = 0; j < 11; j++)
                 {
-                    //move(i+(x*5),j+(y*12));
-                    //if (field_color(x, y)) //true szary, false czerwony
-                       // mvwaddch(board, i + (y * 5) + 1, j + (x * 12) + 1, pieces[piece_to_draw.type][i][j] | COLOR_PAIR(6));
-                    //else
                         mvwaddch(board, i + (y * 5) + 1, j + (x * 12) + 1, pieces[piece_to_draw.type][i][j] | COLOR_PAIR(color));
                 }
             }
@@ -287,54 +283,6 @@ void draw_board()
         for (int j = 5; j < 40; j += 5) // laczenia wewnetrzne
             mvwaddch(playing_board, j, i, ACS_PLUS);
     wattroff(playing_board, COLOR_PAIR(1));
-
-    int temp;
-    /*for (int j = 1; j < 40; j += 5)
-    {
-        switch (j % 2)
-        {
-        case 0:
-            for (int i = 13; i < 96; i += 24) //kolorowanie komorek w wierszach 1,3,5,7
-            {
-                move(j, i);
-                for (int y = 0; y < 4; y++)
-                    for (int x = 0; x < 11; x++)
-                    {
-                        mvwaddch(playing_board, y + j, x + i, ' ' | COLOR_PAIR(3));
-                    }
-            }
-            for (int i = 1; i < 96; i += 24)
-            {
-                move(j, i);
-                for (int y = 0; y < 4; y++)
-                    for (int x = 0; x < 11; x++)
-                    {
-                        mvwaddch(playing_board, y + j, x + i, ' ' | COLOR_PAIR(2));
-                    }
-            }
-            break;
-        case 1:
-            for (int i = 1; i < 96; i += 24) // kolorowanie komorek w wierszach 2,4,6,8
-            {
-                move(j, i);
-                for (int y = 0; y < 4; y++)
-                    for (int x = 0; x < 11; x++)
-                    {
-                        mvwaddch(playing_board, y + j, x + i, ' ' | COLOR_PAIR(3));
-                    }
-            }
-            for (int i = 13; i < 96; i += 24)
-            {
-                move(j, i);
-                for (int y = 0; y < 4; y++)
-                    for (int x = 0; x < 11; x++)
-                    {
-                        mvwaddch(playing_board, y + j, x + i, ' ' | COLOR_PAIR(2));
-                    }
-            }
-            break;
-        }
-    }*/
 
     draw_coordinates(playing_board);
     draw_pieces(playing_board);
