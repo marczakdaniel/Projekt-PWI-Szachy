@@ -1,51 +1,89 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <string.h>
-#define b_b 88
-void draw_board();
-void main_loop();
-int main()
+#include <ctype.h>
+#include "structure.h"
+#include "gamerules.h"
+#include "front.h"
+
+bool is_valid_coord(int c)
 {
-    initscr();
-    //noecho();
-    cbreak();
-    draw_board();
-    main_loop();
-    getch();
-    endwin();
+    //sprawdza poprawnosc wprowadzonego koordynatu
+    return (c >= 0 && c <= 7);
 }
+
+bool owns_piece(int color, int x, int y)
+{
+    ChessPiece piece = getChessPiece(x, y);
+    if (!piece.color)
+        return false;
+    else
+        return (piece.color != color % 2);
+}
+
+bool convert_coordinates(int color, char *from, char *to)
+{
+    //jezeli wprowadzono niepoprawne wartosci zwraca false by ponownie wczytac input
+    //wpp zwraca wywoluje funkcje perform move z podanymi koordynatami
+    //zamienia a-h na 0-7 oraz 1-8 na 0-7
+    int coords[4];
+
+    coords[0] = (tolower(from[0]) - 'a'); //coords "from"
+    coords[1] = from[1] - ('0' + 1);
+    coords[2] = (tolower(to[0]) - 'a'); //coords "to"
+    coords[3] = to[1] - ('0' + 1);
+
+    for (int i = 0; i < 3; i++)
+    {
+        if (!is_valid_coord(coords[i]))
+        {
+            return 0;
+        }
+    }
+    if (owns_piece(color, coords[0], coords[1]))
+    {
+        performMove(coords[0], coords[1], coords[2], coords[4]);
+        return 1;
+    }
+    return 0;
+}
+
 void main_loop()
 {
-    WINDOW *coords_input = newwin(4,21,47,10);
-    WINDOW *From = newwin(1,3,48,19);
-    WINDOW *To = newwin(1,3,49,20);
+    WINDOW *coords_input = newwin(4, 21, 47, 10);
+    WINDOW *From = newwin(1, 3, 48, 19);
+    WINDOW *To = newwin(1, 3, 49, 20);
 
-    box(coords_input,0,0);
+    box(coords_input, 0, 0);
     char from[2];
     char to[2];
     int i = 0;
     bool game_over = false;
 
-    box(coords_input,0,0);
-    mvwprintw(coords_input,1,1, "Ruch z: ");
-    mvwprintw(coords_input,2,1, "Ruch na: ");
+    box(coords_input, 0, 0);
+    mvwprintw(coords_input, 1, 1, "Ruch z: ");
+    mvwprintw(coords_input, 2, 1, "Ruch na: ");
     wrefresh(coords_input);
 
-    while(!game_over)
-    {   
-        box(coords_input,0,0);
-        if(i % 2 == 0)
-            mvwprintw(coords_input,0,4, "Ruch-bialego");
-        else
-            mvwprintw(coords_input,0,4, "Ruch-czarnego");
-        wrefresh(coords_input);
+    while (!game_over)
+    {
+        do
+        { //petla wczytujaca koordynaty wykona sie minimum raz, az do wprowadzenia "poprawnych"
+            box(coords_input, 0, 0);
+            if (i % 2 == 0)
+                mvwprintw(coords_input, 0, 4, "Ruch-bialego");
+            else
+                mvwprintw(coords_input, 0, 4, "Ruch-czarnego");
+            wrefresh(coords_input);
 
-        wscanw(From,"%s",from);
-        move(49,20);
-        wscanw(To,"%s",to);
-        //funkcja konwertująca
-        wclear(From);
-        wclear(To);
+            wscanw(From, "%s", from);
+            move(49, 20);
+            wscanw(To, "%s", to);
+
+            wclear(From);
+            wclear(To);
+        } while (!convert_coordinates(i, from, to));
+
         i++;
     }
 }
@@ -143,48 +181,38 @@ void draw_coordinates(WINDOW *board)
 }
 //funkcja sprawdza kolor pola na ktorym ma byc wyrysowana figura
 bool field_color(int x, int y)
-{   //jesli szare zwraca true, jesli czerwone zwraca false
-    if(x % 2 == 0 && y % 2 == 0)
-        return true;
-    else if(x % 2 == 0 && y % 2 != 0)
-        return false;
-    else if(x % 2 != 0 && y % 2 == 0)
-        return false;
-    else if(x % 2 != 0 && y % 2 != 0)
-        return true;
+{ //jesli szare zwraca true, jesli czerwone zwraca false
+    return !((x + y) % 2);
 }
 void draw_pieces(WINDOW *board)
 {
-    //stworzyć funkcję zwracającą kolor czcionki i funkcję zwracającą kolor tła
-    int piece_color = COLOR_BLACK;
-    int background_color = b_b;
-    init_pair(4, piece_color, background_color);//czerwony
-    init_pair(6, COLOR_BLACK, 239);//szary
-    int x = 0; //0-7 =
-    int y = 7;
+    int color;
+    init_pair(10, COLOR_BLACK, b_b);
+    init_pair(11, COLOR_WHITE, b_b);
+    init_pair(12, COLOR_BLACK, 239);
+    init_pair(13, COLOR_WHITE, 239);
 
-    //dopasować kolejność figur względem numeracji w strukturze
-    char pieces[6][4][11] = {
-        {//wieza
-         {' ', '[', '`', '\'', '`', '\'', '`', '\'', '`', ']', ' '},
-         {' ', ' ', '|', '+', '+', '+', '+', '+', '|', ' ', ' '},
-         {' ', ' ', '|', '+', '+', '+', '+', '+', '|', ' ', ' '},
-         {' ', ' ', '|', '+', '+', '+', '+', '+', '|', ' ', ' '}},
+    char pieces[7][4][11] = {
+        {//pionek
+         {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+         {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+         {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+         {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}},
         {//pionek
          {' ', ' ', ' ', '(', ' ', ' ', ' ', ')', ' ', ' ', ' '},
          {' ', ' ', ' ', ')', ')', '|', '(', '(', ' ', ' ', ' '},
          {' ', ' ', '(', ' ', ' ', ' ', ' ', ' ', ')', ' ', ' '},
          {' ', '[', '|', '|', '|', '|', '|', '|', '|', ']', ' '}},
+        {//wieza
+         {' ', '[', '`', '\'', '`', '\'', '`', '\'', '`', ']', ' '},
+         {' ', ' ', '|', '+', '+', '+', '+', '+', '|', ' ', ' '},
+         {' ', ' ', '|', '+', '+', '+', '+', '+', '|', ' ', ' '},
+         {' ', ' ', '|', '+', '+', '+', '+', '+', '|', ' ', ' '}},
         {//kon
          {' ', ' ', ' ', '\\', '`', '~', '\'', '/', ' ', ' ', ' '},
          {' ', ' ', ' ', '(', 'o', ' ', 'o', ')', ' ', ' ', ' '},
          {' ', ' ', ' ', ' ', '\\', ' ', '/', '\\', ' ', ' ', ' '},
          {' ', ' ', ' ', ' ', ' ', '"', ' ', ' ', ' ', ' ', ' '}},
-        {//krol
-         {' ', ' ', ' ', ' ', ' ', '+', ' ', ' ', ' ', ' ', ' '},
-         {' ', ' ', ' ', '/', '\\', '^', '/', '\\', ' ', ' ', ' '},
-         {' ', ' ', ' ', '(', '-', '_', '-', ')', ' ', ' ', ' '},
-         {' ', ' ', ' ', ' ', '(', '_', ')', ' ', ' ', ' ', ' '}},
         {//goniec
          {' ', ' ', ' ', '/', ' ', '+', ' ', '\\', ' ', ' ', ' '},
          {' ', ' ', ' ', '\\', ' ', ' ', ' ', '/', ' ', ' ', ' '},
@@ -194,20 +222,29 @@ void draw_pieces(WINDOW *board)
          {' ', ' ', ' ', ' ', '_', '_', '_', ' ', ' ', ' ', ' '},
          {' ', ' ', ' ', '/', '\\', '*', '/', '\\', ' ', ' ', ' '},
          {' ', ' ', '/', '(', 'o', ' ', 'o', ')', '\\', ' ', ' '},
+         {' ', ' ', ' ', ' ', '(', '_', ')', ' ', ' ', ' ', ' '}},
+        {//krol
+         {' ', ' ', ' ', ' ', ' ', '+', ' ', ' ', ' ', ' ', ' '},
+         {' ', ' ', ' ', '/', '\\', '^', '/', '\\', ' ', ' ', ' '},
+         {' ', ' ', ' ', '(', '-', '_', '-', ')', ' ', ' ', ' '},
          {' ', ' ', ' ', ' ', '(', '_', ')', ' ', ' ', ' ', ' '}}};
     attron(A_BOLD);
-    for (int k = 0; k < 6; k++)
+    for (int y = 0; y < 8; y++)
     {
-        y = k;
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 11; j++)
+        for (int x = 0; x < 8; x++)
+        {
+            ChessPiece piece_to_draw = getChessPiece(x, y);
+            color = piece_to_draw.color + (field_color(x, y) * 2) + 9;
+            if(!piece_to_draw.color) color++;
+
+            for (int i = 0; i < 4; i++)
             {
-                //move(i+(x*5),j+(y*12));
-                if(field_color(x,y))//true szary, false czerwony
-                    mvwaddch(board, i + (x * 5) + 1, j + (y * 12) + 1, pieces[k][i][j] | COLOR_PAIR(6));
-                else
-                    mvwaddch(board, i + (x * 5) + 1, j + (y * 12) + 1, pieces[k][i][j] | COLOR_PAIR(4));
+                for (int j = 0; j < 11; j++)
+                {
+                        mvwaddch(board, i + (y * 5) + 1, j + (x * 12) + 1, pieces[piece_to_draw.type][i][j] | COLOR_PAIR(color));
+                }
             }
+        }
     }
     attroff(A_BOLD);
 }
@@ -247,69 +284,6 @@ void draw_board()
             mvwaddch(playing_board, j, i, ACS_PLUS);
     wattroff(playing_board, COLOR_PAIR(1));
 
-    int temp;
-    for (int j = 1; j < 40; j += 5)
-    {
-        switch (j % 2)
-        {
-        case 0:
-            for (int i = 13; i < 96; i += 24) //kolorowanie komorek w wierszach 1,3,5,7
-            {
-                move(j, i);
-                for (int y = 0; y < 4; y++)
-                    for (int x = 0; x < 11; x++)
-                    {
-                        mvwaddch(playing_board, y + j, x + i, ' ' | COLOR_PAIR(3));
-                    }
-            }
-            for (int i = 1; i < 96; i += 24) 
-            {
-                move(j, i);
-                for (int y = 0; y < 4; y++)
-                    for (int x = 0; x < 11; x++)
-                    {
-                        mvwaddch(playing_board, y + j, x + i, ' ' | COLOR_PAIR(2));
-                    }
-            }
-            break;
-        case 1:
-            for (int i = 1; i < 96; i += 24) // kolorowanie komorek w wierszach 2,4,6,8
-            {
-                move(j, i);
-                for (int y = 0; y < 4; y++)
-                    for (int x = 0; x < 11; x++)
-                    {
-                        mvwaddch(playing_board, y + j, x + i, ' ' | COLOR_PAIR(3));
-                    }
-            }
-            for (int i = 13; i < 96; i += 24) 
-            {
-                move(j, i);
-                for (int y = 0; y < 4; y++)
-                    for (int x = 0; x < 11; x++)
-                    {
-                        mvwaddch(playing_board, y + j, x + i, ' ' | COLOR_PAIR(2));
-                    }
-            }
-            break;
-        }
-    }
-    /* test for displaying chess piece on board
-    wattron(playing_board,COLOR_PAIR(1));
-    
-    char piece[3][4] ={
-                    {' ','(',')',' '},
-                    {' ',')','(',' '},
-                    {'/','_','_','\\'}
-    };
-    
-    for(int i = 0; i < 3; i++)
-        for(int j = 0; j < 4; j++)
-        {
-            move(i+9,j+85);
-            mvwaddch(playing_board, i+9,j+85,piece[i][j]);
-        }
-    wattroff(playing_board,COLOR_PAIR(1));*/
     draw_coordinates(playing_board);
     draw_pieces(playing_board);
     refresh();
