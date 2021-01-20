@@ -12,16 +12,25 @@ bool is_valid_coord(int c)
     return (c >= 0 && c <= 7);
 }
 
-bool convert_coordinates(char *from, char *to)
+bool owns_piece(int color, int x, int y)
+{
+    ChessPiece piece = getChessPiece(x, y);
+    if (!piece.color)
+        return false;
+    else
+        return (piece.color != color % 2);
+}
+
+bool convert_coordinates(int color, char *from, char *to)
 {
     //jezeli wprowadzono niepoprawne wartosci zwraca false by ponownie wczytac input
     //wpp zwraca wywoluje funkcje perform move z podanymi koordynatami
     //zamienia a-h na 0-7 oraz 1-8 na 0-7
     int coords[4];
 
-    coords[0] = (tolower(from[0]) - 'a');
+    coords[0] = (tolower(from[0]) - 'a'); //coords "from"
     coords[1] = from[1] - ('0' + 1);
-    coords[2] = (tolower(to[0]) - 'a');
+    coords[2] = (tolower(to[0]) - 'a'); //coords "to"
     coords[3] = to[1] - ('0' + 1);
 
     for (int i = 0; i < 3; i++)
@@ -31,8 +40,12 @@ bool convert_coordinates(char *from, char *to)
             return 0;
         }
     }
-    performMove(coords[0], coords[1], coords[2], coords[4]);
-    return 1;
+    if (owns_piece(color, coords[0], coords[1]))
+    {
+        performMove(coords[0], coords[1], coords[2], coords[4]);
+        return 1;
+    }
+    return 0;
 }
 
 void main_loop()
@@ -69,7 +82,8 @@ void main_loop()
 
             wclear(From);
             wclear(To);
-        } while (!convert_coordinates(from, to));
+        } while (!convert_coordinates(i, from, to));
+
         i++;
     }
 }
@@ -172,16 +186,19 @@ bool field_color(int x, int y)
 }
 void draw_pieces(WINDOW *board)
 {
-    //stworzyć funkcję zwracającą kolor czcionki i funkcję zwracającą kolor tła
-    int piece_color = COLOR_BLACK;
-    int background_color = b_b;
-    init_pair(4, piece_color, background_color); //czerwony
-    init_pair(6, COLOR_BLACK, 239);              //szary
-    int x = 0;                                   //0-7 =
-    int y = 7;
+    int color;
+    init_pair(9, COLOR_WHITE, b_b); //dla pustego pola
+    init_pair(10, COLOR_BLACK, 239);
+    init_pair(11, COLOR_WHITE, 239);
+    init_pair(12, COLOR_BLACK, b_b);
+    init_pair(13, COLOR_WHITE, b_b);
 
-    //dopasować kolejność figur względem numeracji w strukturze
-    char pieces[6][4][11] = {
+    char pieces[7][4][11] = {
+        {//pionek
+         {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+         {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+         {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+         {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}},
         {//pionek
          {' ', ' ', ' ', '(', ' ', ' ', ' ', ')', ' ', ' ', ' '},
          {' ', ' ', ' ', ')', ')', '|', '(', '(', ' ', ' ', ' '},
@@ -213,18 +230,25 @@ void draw_pieces(WINDOW *board)
          {' ', ' ', ' ', '(', '-', '_', '-', ')', ' ', ' ', ' '},
          {' ', ' ', ' ', ' ', '(', '_', ')', ' ', ' ', ' ', ' '}}};
     attron(A_BOLD);
-    for (int k = 0; k < 6; k++)
+    for (int y = 0; y < 8; y++)
     {
-        y = k;
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 11; j++)
+        for (int x = 0; x < 8; x++)
+        {
+            ChessPiece piece_to_draw = getChessPiece(x, y);
+            color = piece_to_draw.color + (field_color(x, y) * 2) + 9;
+
+            for (int i = 0; i < 4; i++)
             {
-                //move(i+(x*5),j+(y*12));
-                if (field_color(x, y)) //true szary, false czerwony
-                    mvwaddch(board, i + (x * 5) + 1, j + (y * 12) + 1, pieces[k][i][j] | COLOR_PAIR(6));
-                else
-                    mvwaddch(board, i + (x * 5) + 1, j + (y * 12) + 1, pieces[k][i][j] | COLOR_PAIR(4));
+                for (int j = 0; j < 11; j++)
+                {
+                    //move(i+(x*5),j+(y*12));
+                    //if (field_color(x, y)) //true szary, false czerwony
+                       // mvwaddch(board, i + (y * 5) + 1, j + (x * 12) + 1, pieces[piece_to_draw.type][i][j] | COLOR_PAIR(6));
+                    //else
+                        mvwaddch(board, i + (y * 5) + 1, j + (x * 12) + 1, pieces[piece_to_draw.type][i][j] | COLOR_PAIR(color));
+                }
             }
+        }
     }
     attroff(A_BOLD);
 }
@@ -265,7 +289,7 @@ void draw_board()
     wattroff(playing_board, COLOR_PAIR(1));
 
     int temp;
-    for (int j = 1; j < 40; j += 5)
+    /*for (int j = 1; j < 40; j += 5)
     {
         switch (j % 2)
         {
@@ -310,7 +334,7 @@ void draw_board()
             }
             break;
         }
-    }
+    }*/
 
     draw_coordinates(playing_board);
     draw_pieces(playing_board);
