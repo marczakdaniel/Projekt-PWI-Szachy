@@ -9,12 +9,12 @@
 
 int main()
 {
-   // initscr();
+    initscr();
     //noecho();
     //cbreak();
     
     gameInit();
-    
+    /*
     printf("Test\n");
     
     for(int i = 0; i < 8; i++) {
@@ -29,8 +29,10 @@ int main()
     printf("%d %d\n", isKingChecked(1), isKingChecked(2));
     
     DisplayArrayContent();
+    */
     //draw_board();
     //main_loop();
+    main_menu();
     getch();
     endwin();
 }

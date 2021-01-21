@@ -47,7 +47,75 @@ bool convert_coordinates(int color, char *from, char *to)
     }
     return 0;
 }
+//funkcja wyswietla interfejs wybierania figury
+//oraz zwraca jaką figure wybrano następnie ponownie
+//laduje plansze
+//nie podlaczona do niczego
+int choosePiece()
+{
+    noecho();
+    WINDOW *SelectPiece =  newwin(6,16,47,33);
+    box(SelectPiece,0,0);
 
+    refresh();
+    wrefresh(SelectPiece);
+
+    keypad(SelectPiece,true);
+    char choices[4][10] = {
+        "Wieza",
+        "Kon",
+        "Goniec",
+        "Hetman"
+    };
+    int ch;
+    int highlight = 0;
+    bool isPicekd = false;
+    
+    init_pair(20, COLOR_WHITE, 124);
+    init_pair(21,124, COLOR_WHITE);
+    wbkgd(SelectPiece, COLOR_PAIR(20));
+
+    mvwaddstr(SelectPiece, 0, 1, "Wybierz figure");
+    while(!isPicekd)
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            if(i == highlight)
+            {   
+                wattron(SelectPiece,COLOR_PAIR(21));
+                mvwaddstr(SelectPiece, i+1, 1, choices[i]);
+                wattroff(SelectPiece,COLOR_PAIR(21));
+            }
+            else
+                mvwprintw(SelectPiece, i+1, 1, "%s", choices[i]);
+        }
+        wrefresh(SelectPiece);
+        refresh();
+
+        ch = wgetch(SelectPiece);
+        switch (ch)
+        {
+            case KEY_UP:
+                highlight--;
+                break;
+            case KEY_DOWN:
+                highlight++;
+                break;
+            case 10:
+            printw("xd");
+                isPicekd = true;
+                break;
+            default:
+                continue;
+        }
+        if(highlight > 3) highlight--;
+        if(highlight < 0) highlight++;
+    }
+    delwin(SelectPiece);
+
+    draw_board();
+    return 4 + highlight;//zgodnie z oznaczeniem typów figur
+}
 void main_loop()
 {
     WINDOW *coords_input = newwin(4, 21, 47, 10);

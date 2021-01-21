@@ -147,7 +147,7 @@ bool checkRookMove(int color, int xA, int yA, int xB, int yB) {
 
 bool checkQueenMove(int color, int xA, int yA, int xB, int yB) {
 	//można wykorzystać gotowe funkcje dla gońca i wieży
-	if(xA != xB && yA != yB && (xA - yA) != (xB - yB) return false;
+	if(xA != xB && yA != yB && (xA - yA) != (xB - yB)) return false;
 
 	if(xA == xB) {
 		for(int i = min(yB, yA) + 1; i < max(yB, yA); i++) {
