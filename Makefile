@@ -13,4 +13,4 @@ gamerules.o: source/gamerules.c source/structure.h source/gamerules.h
 	gcc -std=c11 -Wall -Wextra -Werror -c source/gamerules.c -o gamerules.o
 	
 front.o: source/front.c source/structure.h source/gamerules.h source/front.h
-	gcc -std=c11 -Wall -Wextra -Werror -c source/front.c -o front.o
+	gcc -std=c11 -Wall -Wextra -Werror -c source/front.c -o front.o -lncurses
