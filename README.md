@@ -1,5 +1,13 @@
 # Szachy - implementacja komputerowa
 
+## Spis treści
+* [Zarys projektu](#zarys-projektu)
+* [Technologie](#technologie)
+* [Instrukcja konfiguracji](#instrukcja-konfiguracji)
+* [Instrukcja instalacji](#instrukcja-instalacji)
+* [Jak grać?](#jak-grać)
+* [Licencje](#licencje)
+
 ## Zarys projektu
 Projekt jest implementacją komputerową znanej gry planszowej - szachy w języku programistycznym C. Powstał on w ramach projektu programistycznego na przedmiot - Podstawowy warsztat informatyka realizowany w ramach I semestru studiów Informatycznych I stopnia na Instytucie Infomratycznym Uniwersytetu Wrocławskiego w roku 2020/2021. Autorom projektu zależało na jak najdokładniejszego odwzorowania uczucia gry w szachy. </br>
 ### Autorzy projektu:
@@ -14,10 +22,12 @@ Wszyscy są studentami Informatyki i realizują program kursu: Podstawowy warszt
 * Zaznajomienie się ze Gitem oraz platformom Github
 * Nauka pracy zespołowej i efektywnym działaniem w zespole
 
-## Instrukcja konfiguracji:
+## Technologie
+
+## Instrukcja konfiguracji
 
 
-## Instrukcja instalacji:
+## Instrukcja instalacji
 
 ## Jak grać?
 
