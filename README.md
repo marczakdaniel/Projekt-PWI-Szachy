@@ -24,11 +24,16 @@ Wszyscy są studentami Informatyki i realizują program kursu: Podstawowy warszt
 
 ## Technologie
 
-## Instrukcja konfiguracji
-
-
-## Instrukcja instalacji
-
+## Instrukcja instalacji i uruchomienia
+* Sklonuj repozytorium
+* Wejdż do repozytorium i wykonaj polecenie:
+```
+make
+```
+* Następnie otwórz skompilowany projekt poleceniem:
+```
+./szachy
+```
 ## Jak grać?
 
 ## Licencje
