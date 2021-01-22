@@ -23,6 +23,7 @@ Wszyscy są studentami Informatyki i realizują program kursu: Podstawowy warszt
 * Nauka pracy zespołowej i efektywnym działaniem w zespole
 
 ## Technologie
+Projekt tworzony jest w języku programistycznym C. 
 
 ## Instrukcja instalacji i uruchomienia
 * Sklonuj repozytorium
